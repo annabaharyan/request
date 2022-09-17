@@ -1,0 +1,11 @@
+a{
+    color: #202e41;
+    text-decoration: none;
+}
+li p{
+    list-style: none;
+    cursor: pointer;
+}
+.active{
+    color: rgb(77, 130, 146);
+}
