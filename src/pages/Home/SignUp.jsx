@@ -27,39 +27,37 @@ function Copyright(props) {
   );
 }
 
-
 const theme = createTheme();
 
-
-export default function SignUp() {
-
-
+export default function SignUp({myDispatch}) {
 const [formValues,setFormValues]=useState({
-  fullName:'',
+  FullName:'',
   email:'',
-  password:'',
+  category_id:'',
   phone:'',
   telegram:'',
   whatsapp:''
   
 });
- const [formErrors,setFormErrors]=useState({})
-const[isSumbit,setIsSubmit]=useState(false)
-  
+const [formErrors,setFormErrors]=useState({})
+const[isSubmit,setIsSubmit]=useState(false)
+const [post,setPost]=useState({})  
 const handleChange=(e)=>{
 
  const {name,value}= e.target
  setFormValues({...formValues,[name]:value})
 }
+
 const validate=(values)=>{
 const errors={}
 const fullNameRegex=/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/;
 const emailRegex=/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const phoneRegex=/\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/
-if(!values.fullName){
-  errors.fullName='Username is required!'
+const categoryRegex=/^[1-6]+$/;
+if(!values.FullName){
+  errors.FullName='Username is required!'
 }else if(!fullNameRegex.test(values.fullName)){
-  errors.fullName='wrong Username!'
+  errors.FullName='wrong Username!'
 }
 if(!values.email){
   errors.email='Email is required!'
@@ -70,6 +68,11 @@ if(!values.phone){
   errors.phone='Phone is required!'
 }else if(!phoneRegex.test(values.phone)){
   errors.phone='wrong Phone Number!'
+}
+if(!values.category_id){
+  errors.category_id='Category_id is required!'
+}else if(!categoryRegex.test(values.category_id)){
+  errors.category_id='Wrong category id.Type number from 1 to 6!'
 }
 if(!values.telegram){
   errors.telegram='Telegram is required!'
@@ -84,21 +87,46 @@ if(!values.whatsapp){
 return errors
 }
 
+const item={
+  ...formValues,
+ 
+}
+ function created() {
+  fetch('https://loopconstruct.am/api/create/post', {
+    method: 'POST',
+    body: JSON.stringify(item),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8',
+    },
+  })
+     .then((response) => response.json())
+     .then((user) => {
+      myDispatch({
+                type:"AddUser",
+                payload:user
+              }
+              )
+     })
+     .catch((err) => {
+        console.log(err.message);
+     });
+}
 
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // const data = new FormData(event.currentTarget);
-    // console.log({
-    //   email: data.get('email'),
-    //   password: data.get('password'),
-    // });
-    setFormErrors( validate(formValues))
-    setIsSubmit(true)
-  };
+
+
+function handleSubmit(e){
+  e.preventDefault();
+  setFormErrors( validate(formValues))
+  created()
+
+}
+
+
+
 useEffect(()=>{
   console.log(formErrors);
-  if(Object.keys(formErrors).length===0 && isSumbit){
+  if(Object.keys(formErrors).length===0 && isSubmit){
     console.log(formValues);
   }
 },[formErrors])
@@ -107,7 +135,7 @@ useEffect(()=>{
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
-        {Object.keys(formErrors).length===0 && isSumbit?(<Box className='success'>Sign in succesfully</Box>):('')}
+        {Object.keys(formErrors).length===0 && isSubmit?(<Box className='success'>Sign in succesfully</Box>):('')}
         <Box
           sx={{
             marginTop: 8,
@@ -127,18 +155,18 @@ useEffect(()=>{
               <Grid item xs={12} >
                 <TextField
                   autoComplete="given-name"
-                  name="fullName"
+                  name="FullName"
                   required
                   fullWidth
                   id="FullName"
                   label="Full Name"
                   autoFocus
-                  value={formValues.fullName}
+                  value={formValues.FullName}
                   onChange={handleChange}
 
                 />
               </Grid>
-              <p>{formErrors.fullName}</p>
+              <p>{formErrors.FullName}</p>
               <Grid item xs={12}>
                 <TextField
                   required
@@ -156,15 +184,15 @@ useEffect(()=>{
                 <TextField
                   required
                   fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="new-password"
-                  value={formValues.password}
+                  id="category_id"
+                  label="Category Id"
+                  name="category_id"
+                  autoComplete="category_id"
+                  value={formValues.category_id}
                   onChange={handleChange}
                 />
               </Grid>
+              <p>{formErrors.category_id}</p>
               <Grid item xs={12} >
                 <TextField
                   required

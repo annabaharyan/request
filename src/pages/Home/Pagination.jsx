@@ -1,7 +1,7 @@
 import React from 'react';
 import { useState,useEffect } from "react";
 import homeCss from './home.css'
-const Pagination = ({pagesP,setDatasP}) => {
+const Pagination = ({pagesP,myDisp}) => {
     const [pages2,setPages2]=useState()
  
     useEffect(()=>{
@@ -10,15 +10,18 @@ const Pagination = ({pagesP,setDatasP}) => {
     },[pagesP])
     function getPost(url){
          if(url){
-            showAvatar(url)
+            showUrl(url)
          }
      }
-     async function showAvatar(url) {
+     async function showUrl(url) {
         try {
         let response = await fetch(`${url}`)
         let mydata = await response.json()
-        
-        setDatasP(mydata.data)
+  
+       myDisp({
+        type:"showData",
+        payload:mydata
+      })
         setPages2(mydata.links)
     } catch(err) {
       
@@ -36,7 +39,7 @@ const Pagination = ({pagesP,setDatasP}) => {
                 {page.label==='&laquo; Previous'?'<<':(page.label==='Next &raquo;')?'>>':page.label}
             </a>
             
-        )):"datark"
+        )):"Loading..."
         }
        
          
