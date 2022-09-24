@@ -22,7 +22,7 @@ export const reducer = (state = [], action) => {
 
 
         case 'deleteItem':
-            const a = state.data.filter(res => res.id != action.payload)
+            const a = state.data.filter(res => res.id !== action.payload)
             console.log(a)
             return state = {
                 ...state,

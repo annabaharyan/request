@@ -23,7 +23,7 @@ function deleteItem(id){
                 return(
 
                   <>
-   {console.log(state)}
+   {/* {console.log(state)} */}
 <TableContainer component={Paper}>
                   <Table aria-label="simple-table">
                     <Thead/>           

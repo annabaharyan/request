@@ -14,6 +14,9 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import homeCss from './home.css'
 import {useState, useEffect} from 'react'
+import { FormControl, InputLabel, Select } from '@mui/material';
+import MenuItem from '@mui/material/MenuItem';
+import { reducer } from './reducer';
 function Copyright(props) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
@@ -29,7 +32,8 @@ function Copyright(props) {
 
 const theme = createTheme();
 
-export default function SignUp({myDispatch}) {
+export default function SignUp({myDispatch, stateCats}) {
+  
 const [formValues,setFormValues]=useState({
   FullName:'',
   email:'',
@@ -39,6 +43,7 @@ const [formValues,setFormValues]=useState({
   whatsapp:''
   
 });
+
 const [formErrors,setFormErrors]=useState({})
 const[isSubmit,setIsSubmit]=useState(false)
 const [post,setPost]=useState({})  
@@ -47,13 +52,21 @@ const handleChange=(e)=>{
  const {name,value}= e.target
  setFormValues({...formValues,[name]:value})
 }
+const changeCategory=(e)=>{
+ setFormValues({
+  ...formValues,
+  category_id:e.target.value
+}
+)
 
+}
+console.log(formValues);
 const validate=(values)=>{
 const errors={}
 const fullNameRegex=/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/;
 const emailRegex=/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 const phoneRegex=/\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})?/
-const categoryRegex=/^[1-6]+$/;
+
 if(!values.FullName){
   errors.FullName='Username is required!'
 }else if(!fullNameRegex.test(values.fullName)){
@@ -69,11 +82,6 @@ if(!values.phone){
 }else if(!phoneRegex.test(values.phone)){
   errors.phone='wrong Phone Number!'
 }
-if(!values.category_id){
-  errors.category_id='Category_id is required!'
-}else if(!categoryRegex.test(values.category_id)){
-  errors.category_id='Wrong category id.Type number from 1 to 6!'
-}
 if(!values.telegram){
   errors.telegram='Telegram is required!'
 }else if(!phoneRegex.test(values.phone)){
@@ -87,14 +95,10 @@ if(!values.whatsapp){
 return errors
 }
 
-const item={
-  ...formValues,
- 
-}
  function created() {
   fetch('https://loopconstruct.am/api/create/post', {
     method: 'POST',
-    body: JSON.stringify(item),
+    body: JSON.stringify(formValues),
     headers: {
       'Content-type': 'application/json; charset=UTF-8',
     },
@@ -112,10 +116,8 @@ const item={
      });
 }
 
-
-
-
 function handleSubmit(e){
+
   e.preventDefault();
   setFormErrors( validate(formValues))
   created()
@@ -181,19 +183,30 @@ useEffect(()=>{
               </Grid>
               <p>{formErrors.email}</p>
               <Grid item xs={12}>
-                <TextField
-                  required
-                  fullWidth
-                  id="category_id"
-                  label="Category Id"
-                  name="category_id"
-                  autoComplete="category_id"
-                  value={formValues.category_id}
-                  onChange={handleChange}
-                />
+             
+                <FormControl fullWidth>
+                  <InputLabel id="category_name">Category</InputLabel>
+                  <Select
+                    labelId="category_name"
+                    id="category_id"
+                    value={formValues.category_id}
+                    label="Category"
+                    name='category_id'
+                    onChange={changeCategory}
+                    
+                  >
+                    {stateCats&&stateCats.map(categ=>(
+                               
+                        <MenuItem value={categ.id} key={categ.id} >{categ.name}</MenuItem>
+                    
+                     ))}
+                  </Select>
+                </FormControl>
+            
               </Grid>
               <p>{formErrors.category_id}</p>
               <Grid item xs={12} >
+              
                 <TextField
                   required
                   fullWidth

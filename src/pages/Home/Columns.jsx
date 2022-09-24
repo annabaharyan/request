@@ -68,7 +68,7 @@ function filterCategory(id){
         <FirstColumnTable myDispatch={(res)=>dispatch(res)}/>
         </div>
       <div className="col">
-      <SignUp myDispatch={(res)=>dispatch(res)} />
+      <SignUp myDispatch={(res)=>dispatch(res)} stateCats={stateCat}/>
       </div>
        
       </MyContext.Provider>
